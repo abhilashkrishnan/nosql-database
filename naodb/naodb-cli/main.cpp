@@ -13,5 +13,24 @@ int main()
 
     cout << "Dir: " + dir << endl;
 
+    string key = "Customer";
+
+    db.SetKeyValue(key, "Annis Jackson");
+    
+    string json = R"(
+
+        "Italy" : {
+               "Name" : "Federico",
+                "Designation" : "Director",
+                "Email" : "fed@milan.it" 
+         }
+    )";
+
+    key = "CustomerJson";
+    db.SetKeyValue(key, json);
+    
+    cout << "Key: " << key << ", Value: " << db.GetKeyValue(key);
+
+    
     return 0;
 }

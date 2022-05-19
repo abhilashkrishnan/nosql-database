@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ namespace NaoDB {
 
     Database Database::CreateEmptyDB(string dbname)
     {
-        string basedir("./naodb");
+        string basedir("C:/naodb");
 
         if (!filesystem::exists(basedir))
         {
@@ -71,17 +72,30 @@ namespace NaoDB {
 
     string Database::GetKeyValue(string key) const
     {
-        ifstream is(m_fullpath + "/" + key + "_string.kv");
+        string keydb(m_fullpath + "/" + key + "_string.kv");
 
-        string value;
+        if (filesystem::exists(keydb))
+        {
+            ifstream is(m_fullpath + "/" + key + "_string.kv");
 
-        is.seekg(0, ios::end);
-        value.reserve(is.tellg());
-        is.seekg(0, ios::beg);
 
-        value.assign(istreambuf_iterator<char>(is), istreambuf_iterator<char>());
+            string value;
 
-        return value;
+            is.seekg(0, ios::end);
+
+            value.reserve(is.tellg());
+
+            is.seekg(0, ios::beg);
+
+            value.assign(istreambuf_iterator<char>(is), istreambuf_iterator<char>());
+
+            return value;
+        }
+        else
+        {
+            cout << "No value exists for theh key: " << key << endl;
+            return "";
+        }
     }
 
 
