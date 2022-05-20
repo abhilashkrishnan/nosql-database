@@ -46,7 +46,7 @@ namespace NaoDB {
          
     const std::unique_ptr<Database> NaoDatabase::Impl::CreateEmptyDB(string dbname)
     {
-        string basedir("C:/naodb");
+        string basedir("./naodb");
 
         if (!filesystem::exists(basedir))
         {
