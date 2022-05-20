@@ -1,2 +1,2 @@
 # nosql-database
-Key-Value NoSQL Database from ground up (Scratch!!!!)
+Simple implementation of Key-Value NoSQL Database from ground up (Scratch!!!!) in C++ 17
