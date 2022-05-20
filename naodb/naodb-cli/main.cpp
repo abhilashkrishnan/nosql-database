@@ -1,5 +1,5 @@
 #include <iostream>
-#include "database.h"
+#include "naodb.h"
 
 using namespace std;
 
@@ -7,15 +7,15 @@ int main()
 {
     cout << "NaoDB Cli" << endl;
 
-    NaoDB::Database db = NaoDB::Database::CreateEmptyDB("testdb");
-    db.LoadDB("testdb");
-    string dir = db.GetDBDirectory();
+    std::unique_ptr<NaoDB::Database> db(NaoDB::NaoDB::CreateEmptyDB("ItCust"));
+    db->LoadDB("ItCust");
+    string dir = db->GetDBDirectory();
 
-    cout << "Dir: " + dir << endl;
+   cout << "Dir: " + dir << endl;
 
     string key = "Customer";
 
-    db.SetKeyValue(key, "Annis Jackson");
+    db->SetKeyValue(key, "Annis Jackson");
     
     string json = R"(
 
@@ -27,9 +27,9 @@ int main()
     )";
 
     key = "CustomerJson";
-    db.SetKeyValue(key, json);
+    db->SetKeyValue(key, json);
     
-    cout << "Key: " << key << ", Value: " << db.GetKeyValue(key);
+    cout << "Key: " << key << ", Value: " << db->GetKeyValue(key);
 
     
     return 0;
