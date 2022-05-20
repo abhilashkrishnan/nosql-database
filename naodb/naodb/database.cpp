@@ -1,10 +1,12 @@
+#include "naodb.h"
 #include "database.h"
 #include "extensions.h"
 
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include "naodb.h"
+#include <unordered_map>
+
 
 
 using namespace std;
@@ -31,12 +33,34 @@ namespace NaoDB {
     private:
         std::string m_dbname;
         std::string m_fullpath;
+        std::unordered_map<std::string, std::string> m_KeyValueStore;
     };
 
     NaoDatabase::Impl::Impl(std::string dbname, std::string fullpath) :
         m_dbname(dbname), m_fullpath(fullpath)
     {
+        for (auto& p : filesystem::directory_iterator(GetDBDirectory()))
+        {
+            if (p.exists() && p.is_regular_file())
+            {
+                string keyWithString = p.path().filename().string();
+                string key = keyWithString.substr(0, keyWithString.length() - 10);
 
+                if (".kv" == p.path().extension())
+                {
+                    ifstream is(p.path());
+
+                    string value;
+
+                    is.seekg(0, ios::end);
+                    value.reserve(is.tellg());
+                    is.seekg(0, ios::beg);
+                    value.assign(istreambuf_iterator<char>(is), istreambuf_iterator<char>());
+
+                    m_KeyValueStore.insert({ key, value });
+                }
+            }
+        }
     }
 
     NaoDatabase::Impl::~Impl()
@@ -95,6 +119,8 @@ namespace NaoDB {
         {
             filesystem::remove_all(m_fullpath);
         }
+
+        m_KeyValueStore.clear();
     }
 
     void NaoDatabase::Impl::SetKeyValue(string key, string value)
@@ -103,11 +129,13 @@ namespace NaoDB {
         os.open(m_fullpath + "/" + key + "_string.kv", ios::out | ios::trunc);
         os << value;
         os.close();
+
+        m_KeyValueStore.insert({ key, value });
     }
 
     string NaoDatabase::Impl::GetKeyValue(string key) 
     {
-        string keydb(m_fullpath + "/" + key + "_string.kv");
+        /*string keydb(m_fullpath + "/" + key + "_string.kv");
         string value("");
 
         if (filesystem::exists(keydb))
@@ -131,7 +159,16 @@ namespace NaoDB {
         {
             cout << "No value exists for the key: " << key << endl;
             return value;
+        }*/
+
+        const auto& v = m_KeyValueStore.find(key);
+
+        if (v == m_KeyValueStore.end())
+        {
+            return "";
         }
+
+        return v->second;
     }
 
     NaoDatabase::NaoDatabase(std::string dbname, std::string fullpath)
