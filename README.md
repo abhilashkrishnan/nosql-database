@@ -8,6 +8,6 @@ This project is built using Visual Studio 2019 using msvc142
 
 - Data Types
 - Hashing
-- In-memory Cache
+- ~~In-memory Cache~~
 - Query
 - Search Optimization
